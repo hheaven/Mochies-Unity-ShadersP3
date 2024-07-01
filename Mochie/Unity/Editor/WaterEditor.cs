@@ -247,6 +247,10 @@ public class WaterEditor : ShaderGUI {
 	MaterialProperty _BicubicLightmapping = null;
 	MaterialProperty _MirrorNormalOffsetSwizzle = null;
 	MaterialProperty _InvertNormals = null;
+	MaterialProperty _Wave = null;
+	MaterialProperty _scale = null;
+	MaterialProperty _WaveStrength = null;
+	MaterialProperty _WaveOpacityMask = null;
 	MaterialProperty _VisualizeFlowmap = null;
 	MaterialProperty _AudioLink = null;
 	MaterialProperty _AudioLinkStrength = null;
@@ -382,6 +386,12 @@ public class WaterEditor : ShaderGUI {
 						me.ShaderProperty(_NormalMapFlipbookSpeed, "Speed");
 					});
 				}
+				
+				me.ShaderProperty(_Wave, "Wave");
+				me.ShaderProperty(_WaveOpacityMask, "WaveOpacityMask");
+				me.ShaderProperty(_WaveStrength, "WaveStrength");
+				me.ShaderProperty(_scale, "scale");
+				
 			};
 			Foldouts.Foldout("NORMAL MAPS", foldouts, norm0TabButtons, mat, me, norm0TabAction);
 
