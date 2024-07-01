@@ -3,8 +3,24 @@
 
 float bla[2]; // Literally the stupidest thing I've ever had to do (part 1)
 
+float3 Wave2Normal( float3 pos , float scale , float size, float strength ){
+	fixed2  readuv	= float2( -pos.x/(scale*2)+0.5, pos.z/(scale*2)+0.5 );
+	
+	float3 duv = float3(1.0/size,1.0/size, 0);
+	float v1 = MOCHIE_SAMPLE_TEX2D(_Wave, readuv - duv.xz ).y;
+	float v2 = MOCHIE_SAMPLE_TEX2D(_Wave, readuv + duv.xz ).y;
+	float v3 = MOCHIE_SAMPLE_TEX2D(_Wave, readuv - duv.zy ).y;
+	float v4 = MOCHIE_SAMPLE_TEX2D(_Wave, readuv + duv.zy ).y;
+	v1	= pow( saturate( v1-0.03 ), 2.5 );
+	v2	= pow( saturate( v2-0.03 ), 2.5 );
+	v3	= pow( saturate( v3-0.03 ), 2.5 );
+	v4	= pow( saturate( v4-0.03 ), 2.5 );
+	return  normalize(float3((v1 - v2)*strength, (v3 - v4)*strength, 0.1));
+}
+
 float4 frag(v2f i, bool isFrontFace: SV_IsFrontFace) : SV_Target {
 
+	UNITY_SETUP_INSTANCE_ID(i);
 	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
 
 	#if defined(UNITY_PASS_SHADOWCASTER)
@@ -191,6 +207,9 @@ float4 frag(v2f i, bool isFrontFace: SV_IsFrontFace) : SV_Target {
 			#endif
 		#endif
 	#endif
+
+	float3	waveNormal	= Wave2Normal( i.worldPos, _scale, _Wave_TexelSize.z, _WaveStrength );
+	normalMap	= BlendNormals( normalMap, waveNormal );
 
 	#if RAIN_ENABLED
 		float3 rainNormal = GetRipplesNormal(i.uv, _RippleScale, _RippleStr, _RippleSpeed, _RippleSize, _RippleDensity);
@@ -556,6 +575,8 @@ float4 frag(v2f i, bool isFrontFace: SV_IsFrontFace) : SV_Target {
 		float2 opacityUV = ScaleOffsetScrollUV(i.uv, _OpacityMask_ST.xy, _OpacityMask_ST.zw, _OpacityMaskScroll);
 		_Opacity *= MOCHIE_SAMPLE_TEX2D_SAMPLER(_OpacityMask, sampler_FlowMap, opacityUV);
 	#endif
+
+	_Opacity *= MOCHIE_SAMPLE_TEX2D(_WaveOpacityMask, i.uv);
 
 	#if defined(UNITY_PASS_FORWARDADD)
 		#if DEPTH_EFFECTS_ENABLED

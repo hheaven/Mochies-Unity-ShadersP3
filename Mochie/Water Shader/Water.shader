@@ -58,6 +58,11 @@ Shader "Mochie/Water" {
 		_NormalMapFlipbookStrength("Normal Map Flipbook Strength", Float) = 0.2
 		_NormalMapFlipbookScale("Flipbook Scale", Vector) = (3,3,0,0)
 
+		_Wave("Wave", 2D) = "black" {}
+		_scale("scale", Float) = 4
+		_WaveStrength("WaveStrength", Float) = 0.25
+		_WaveOpacityMask("Wave Opacity Mask", 2D) = "white" {}
+
 		[Enum(Off,0, Environment,1, Manual,2, Mirror,3)]_Reflections("Probe Reflections", Int) = 1 // Add "Mirror,3" for vrchat mirror reflections
 		_ReflStrength("Reflection Strength", Float) = 1
 		_ReflTint("Reflection Tint", Color) = (1,1,1,1)
